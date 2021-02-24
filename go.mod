@@ -1,4 +1,4 @@
-module exchangeserve
+module exchange
 
 // +heroku goVersion go1.13
 

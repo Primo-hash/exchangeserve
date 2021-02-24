@@ -1,4 +1,4 @@
-package exchangeserve
+package exchange
 
 import (
 	"github.com/alediaferia/gocountries"

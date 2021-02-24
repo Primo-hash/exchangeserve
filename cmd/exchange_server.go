@@ -1,7 +1,7 @@
 package main
 
 import (
-	"exchangeserve"
+	"exchange"
 	"fmt"
 	"log"
 	"net/http"
@@ -16,15 +16,17 @@ import (
 	const definitions for chi routing regex and Query string parameters
  */
 const (
-	// Chi parameters
-	COUNTRY = "{country_name:[a-z]+}"					// Country name
-	//BDATE = "{begin_date:\\d\\d\\d\\d-\\d\\d-\\d\\d}"	// yyyy-mm-dd date format
-	BDATE = "{begin_date}"	// yyyy-mm-dd date format
-	//EDATE = "{end_date:\\d\\d\\d\\d-\\d\\d-\\d\\d}"	// yyyy-mm-dd date format
-	EDATE = "{end_date}"	// yyyy-mm-dd date format
+	// Chi regex parameters
+	COUNTRY = "{country_name:[a-z]+}"			  // Country name
+	BY = "{b_year:\\d\\d\\d\\d}"		   		  // Begin year
+	BM = "{b_month:\\d\\d\\d\\d}"		   	  // Begin month
+	BD = "{b_day:\\d\\d\\d\\d}"		   		  // Begin day
+	EY = "{e_year:\\d\\d\\d\\d}"		   		  // End year
+	EM = "{e_month:\\d\\d\\d\\d}"		   	  // End month
+	ED = "{e_day:\\d\\d\\d\\d}"		   		  // End day
 
 	// Query string parameters
-	BORDERLIMIT = "limit={:number}"						    // Limit neighbouring countries
+	BORDERLIMIT = "limit={:number}"				  // Limit neighbouring countries
 )
 
 func main() {
@@ -42,7 +44,7 @@ func main() {
 	println("one")
 	r.Get("/", handlerHello)
 	//r.Get("/exchange/v1/exchangehistory/" + COUNTRY, exchangeserve.HandleHistoryGet)
-	r.Get("/exchange/v1/exchangehistory/"+COUNTRY+"/"+BDATE+"-"+EDATE, exchangeserve.HandleHistoryGet)
+	r.Get("/exchange/v1/exchangehistory/"+COUNTRY+"/"+BY+"-"+BM+"-"+BD+"-"+EY+"-"+EM+"-"+ED, exchange.HandlerHistory())
 	//r.Get("/exchange/v1/exchangeborder" + COUNTRY + "{?" + BORDERLIMIT + "}", http.HandlerFunc())
 	//r.Get("/exchange/v1/diag/", http.HandlerFunc())
 	println("onetwo")
