@@ -18,12 +18,13 @@ import (
 const (
 	// Chi regex parameters
 	COUNTRY = "{country_name:[a-z]+}"			  // Country name
+
 	BY = "{b_year:\\d\\d\\d\\d}"		   		  // Begin year
-	BM = "{b_month:\\d\\d\\d\\d}"		   	  // Begin month
-	BD = "{b_day:\\d\\d\\d\\d}"		   		  // Begin day
+	BM = "{b_month:\\d\\d}"		   	  // Begin month
+	BD = "{b_day:\\d\\d}"		   		  // Begin day
 	EY = "{e_year:\\d\\d\\d\\d}"		   		  // End year
-	EM = "{e_month:\\d\\d\\d\\d}"		   	  // End month
-	ED = "{e_day:\\d\\d\\d\\d}"		   		  // End day
+	EM = "{e_month:\\d\\d}"		   	  // End month
+	ED = "{e_day:\\d\\d}"		   		  // End day
 
 	// Query string parameters
 	BORDERLIMIT = "limit={:number}"				  // Limit neighbouring countries
@@ -31,7 +32,6 @@ const (
 
 func main() {
 	port := os.Getenv("PORT")
-
 	if port == "" {
 		log.Fatal("$PORT must be set")
 	}
@@ -41,13 +41,10 @@ func main() {
 
 	// Logs the start and end of each request with the elapsed processing time
 	r.Use(middleware.Logger)
-	println("one")
 	r.Get("/", handlerHello)
-	//r.Get("/exchange/v1/exchangehistory/" + COUNTRY, exchangeserve.HandleHistoryGet)
 	r.Get("/exchange/v1/exchangehistory/"+COUNTRY+"/"+BY+"-"+BM+"-"+BD+"-"+EY+"-"+EM+"-"+ED, exchange.HandlerHistory())
 	//r.Get("/exchange/v1/exchangeborder" + COUNTRY + "{?" + BORDERLIMIT + "}", http.HandlerFunc())
 	//r.Get("/exchange/v1/diag/", http.HandlerFunc())
-	println("onetwo")
 
 	log.Fatal(http.ListenAndServe(":"+port, r))
 }
