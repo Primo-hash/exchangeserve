@@ -28,6 +28,7 @@ type Diagnose struct {
 HandlerLostUser is a function for guiding lost souls back to the right 'relative' path
 */
 func HandlerLostUser(w http.ResponseWriter, r *http.Request) {
+	protocol := "http://"
 	host := r.Host 					// Host URL
 	pathAPI := "/exchange/v1/" 		// API path
 
@@ -38,9 +39,9 @@ func HandlerLostUser(w http.ResponseWriter, r *http.Request) {
 
 	line1 := "Hello! You seem lost! Let me help you!"
 	line2 := "These are some examples:"
-	history := host + pathAPI + pathHistory
-	border := host + pathAPI + pathBorder
-	diagnose := host + pathAPI + pathDiag
+	history := protocol + host + pathAPI + pathHistory
+	border := protocol + host + pathAPI + pathBorder
+	diagnose := protocol + host + pathAPI + pathDiag
 
 	// HTML form for response such that URLs are hyperlinks
 	var form = `<p>`+line1+`</p>
