@@ -1,4 +1,4 @@
-package exchange
+package country
 
 import (
 	"encoding/json"
@@ -7,6 +7,13 @@ import (
 	"net/http"
 )
 
+/*
+URL list for 'REST Countries API' to be modified to query needs
+*/
+const BASEURL = "https://restcountries.eu/"
+const BORDERURL = "https://restcountries.eu/rest/v2/alpha?codes="
+
+// Country struct for JSON encoding
 type Country []struct {
 	Name           string    `json:"name"`
 	TopLevelDomain []string  `json:"topLevelDomain"`
@@ -77,8 +84,8 @@ GetNeighbour returns a string of specified Country's Neighbours' currency codes
 * limit parameter is for restricting the amount of currencies returned
 */
 func GetNeighbour(countryName string, limit int) (string, error) {
-	var borderURL = "https://restcountries.eu/rest/v2/alpha?codes="
-	var countries Country	// Holds JSON object values
+	var borderURL = BORDERURL // URL string for modification
+	var countries Country // Holds JSON object values
 
 	// Query for structs of possible countries
 	country, err := gocountries.CountriesByName(countryName)
@@ -99,9 +106,9 @@ func GetNeighbour(countryName string, limit int) (string, error) {
 		}
 	}
 	// Using http API for restcountriesAPI because gocountries pckg does not support searching by country code
-	// Insert parameters into borderURL for request
-	resData, err := http.Get(fmt.Sprintf(borderURL))
-	if err != nil { // Error handling data
+	// Send HTTP GET request
+	resData, err := http.Get(borderURL)
+	if err != nil { // Error handling HTTP request
 		return "", err
 	}
 	defer resData.Body.Close() // Closing body after finishing read
@@ -121,4 +128,17 @@ func GetNeighbour(countryName string, limit int) (string, error) {
 		}
 	}
 	return currencyCodes, nil
+}
+
+/*
+HealthCheck returns an http status code after checking for a response from REST Countries API servers
+*/
+func HealthCheck() (string, error) {
+	// Using http API for restcountriesAPI because gocountries pckg does not support searching by country code
+	// Send HTTP GET request
+	resData, err := http.Get(BASEURL)
+	if err != nil { // Error handling HTTP request
+		return "", err
+	}
+	return resData.Status, nil
 }

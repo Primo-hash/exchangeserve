@@ -1,4 +1,4 @@
-package exchange
+package currency
 
 import (
 	"encoding/json"
@@ -12,8 +12,9 @@ URL list for 'Foreign exchange rates API' to be modified to query needs
 order: (startDate, endDate, currencyCode, currencyBase)
 NOTE: 'symbols' and 'base' parameters can be omitted as query will return default values for these
  */
+const BASEURL = "https://api.exchangeratesapi.io/"
 const HISTORYURL = "https://api.exchangeratesapi.io/history?start_at=%s&end_at=%s&symbols=%s&base=%s"
-const CURRENCYURL = "https://api.exchangeratesapi.io/latest?&symbols=%s&base=%s"
+const LATESTURL = "https://api.exchangeratesapi.io/latest?&symbols=%s&base=%s"	// URL for latest currency
 
 /*
 GetExchangeData returns a map of a decoded json object with
@@ -25,14 +26,14 @@ or specify multiple countries' currencies and a base currency for comparison.
 */
 func GetExchangeData(startDate, endDate, currencyCode, currencyBase string) (map[string]interface{}, error) {
 	if startDate == "" || endDate == "" { // Request for currency
-		// Insert parameters into CURRENCYURL for request
-		resData, err := http.Get(fmt.Sprintf(CURRENCYURL, currencyCode, currencyBase))
+		// Insert parameters into CURRENCYURL for HTTP GET request
+		resData, err := http.Get(fmt.Sprintf(LATESTURL, currencyCode, currencyBase))
 		if err != nil { // Error handling data
 			return nil, err
 		}
 		return Decode(resData, "date")
 	} else {							  // Request for history
-		// Insert parameters into HISTORYURL for request
+		// Insert parameters into HISTORYURL for HTTP GET request
 		resData, err := http.Get(fmt.Sprintf(HISTORYURL, startDate, endDate, currencyCode, currencyBase))
 		if err != nil { // Error handling data
 			return nil, err
@@ -64,11 +65,24 @@ func Decode(data *http.Response, filter string) (map[string]interface{}, error) 
 	// Optional filtering of certain key in map
 	if filter != "" {
 		// Check for filter word existence
-		_, ok := result[filter];
+		_, ok := result[filter]
 		if ok {
-			delete(result, filter);
+			delete(result, filter)
 		}
 	}
 	// Return map with requested data
 	return result, err
+}
+
+
+/*
+HealthCheck returns an http status code after checking for a response from exchangeratesAPI servers
+*/
+func HealthCheck() (string, error) {
+	// Send HTTP GET request
+	resData, err := http.Get(BASEURL)
+	if err != nil { // Error handling HTTP request
+		return "", err
+	}
+	return resData.Status, nil
 }
