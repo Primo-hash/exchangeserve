@@ -84,15 +84,18 @@ func GetNeighbour(countryName string, limit int) (string, error) {
 	country, err := gocountries.CountriesByName(countryName)
 	// Extract first country
 	c := country[0]
-	// Extract currency code
-	neighbourAlpha := make([]string, limit)
-	neighbourAlpha = c.Borders[:]
+	// Extract border alpha codes
+	neighbourAlpha := c.Borders[:]
+	// To avoid indexing out of neighbourAlpha's range
+	if limit > len(neighbourAlpha) {limit = len(neighbourAlpha)}
 	// parse neighbour alpha codes and append to API call URL
-	for i, a := range neighbourAlpha {
-		if (i != len(neighbourAlpha) - 1) { // If not last element in array
-			borderURL += a + ";"
-		} else {
-			borderURL += a // Avoid appending with ';' at the end
+	for i:= 0; i < limit; i++ {
+		if i >= limit {
+			// Nothing happens if index exceeds limit
+		} else if i == limit - 1  {		// If last element in array
+			borderURL += neighbourAlpha[i] // Avoid appending with ';' at the end
+		} else if i < limit { 				// If not last element in array
+			borderURL += neighbourAlpha[i] + ";"
 		}
 	}
 	// Using http API for restcountriesAPI because gocountries pckg does not support searching by country code
@@ -111,7 +114,7 @@ func GetNeighbour(countryName string, limit int) (string, error) {
 	// Make string value of neighbour country currencies for return
 	currencyCodes := ""
 	for i, a := range countries {
-		if (i != len(countries) - 1) {		// If not last element in array
+		if i != len(countries) - 1 {		// If not last element in array
 			currencyCodes += a.Currencies[0].Code + ","
 		} else {
 			currencyCodes += a.Currencies[0].Code // Avoid appending with ',' at the end
