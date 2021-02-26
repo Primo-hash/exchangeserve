@@ -18,16 +18,12 @@ import (
 const (
 	// Chi regex parameters
 	COUNTRY = "{country_name:[a-z]+}"			  // Country name
-
 	BY = "{b_year:\\d\\d\\d\\d}"		   		  // Begin year
-	BM = "{b_month:\\d\\d}"		   	  // Begin month
-	BD = "{b_day:\\d\\d}"		   		  // Begin day
+	BM = "{b_month:\\d\\d}"		   	  			  // Begin month
+	BD = "{b_day:\\d\\d}"		   		          // Begin day
 	EY = "{e_year:\\d\\d\\d\\d}"		   		  // End year
-	EM = "{e_month:\\d\\d}"		   	  // End month
-	ED = "{e_day:\\d\\d}"		   		  // End day
-
-	// Query string parameters
-	BORDERLIMIT = "limit={:number}"				  // Limit neighbouring countries
+	EM = "{e_month:\\d\\d}"		   	              // End month
+	ED = "{e_day:\\d\\d}"		   		          // End day
 )
 
 func main() {
@@ -43,7 +39,7 @@ func main() {
 	r.Use(middleware.Logger)
 	r.Get("/", handlerHello)
 	r.Get("/exchange/v1/exchangehistory/"+COUNTRY+"/"+BY+"-"+BM+"-"+BD+"-"+EY+"-"+EM+"-"+ED, exchange.HandlerHistory())
-	//r.Get("/exchange/v1/exchangeborder" + COUNTRY + "{?" + BORDERLIMIT + "}", http.HandlerFunc())
+	r.Get("/exchange/v1/exchangeborder/"+COUNTRY, exchange.HandlerBorder())
 	//r.Get("/exchange/v1/diag/", http.HandlerFunc())
 
 	log.Fatal(http.ListenAndServe(":"+port, r))
@@ -66,21 +62,3 @@ func handlerHello(w http.ResponseWriter, r *http.Request) {
 		// TODO must handle the error!
 	}
 }
-
-/*
-// HandlerHistory main handler for route related to `/exchangehistory` requests
-func HandlerHistory(w http.ResponseWriter, r *http.Request) {
-	println("two")
-	switch r.Method {
-		case http.MethodGet:
-		println("three")
-		exchangeserve.handleHistoryGet(w, r)
-		case http.MethodPost:
-			http.Error(w, "Not implemented", http.StatusNotImplemented)
-		case http.MethodPut:
-			http.Error(w, "Not implemented", http.StatusNotImplemented)
-		case http.MethodDelete:
-			http.Error(w, "Not implemented", http.StatusNotImplemented)
-	}
-}
-*/
