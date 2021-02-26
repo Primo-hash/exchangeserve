@@ -28,7 +28,6 @@ type Diagnose struct {
 HandlerLostUser is a function for guiding lost souls back to the right 'relative' path
 */
 func HandlerLostUser(w http.ResponseWriter, r *http.Request) {
-	protocol := "http://" 			// Host protocol
 	host := r.Host 					// Host URL
 	pathAPI := "/exchange/v1/" 		// API path
 
@@ -39,9 +38,9 @@ func HandlerLostUser(w http.ResponseWriter, r *http.Request) {
 
 	line1 := "Hello! You seem lost! Let me help you!"
 	line2 := "These are some examples:"
-	history := protocol + host + pathAPI + pathHistory
-	border := protocol + host + pathAPI + pathBorder
-	diagnose := protocol + host + pathAPI + pathDiag
+	history := host + pathAPI + pathHistory
+	border := host + pathAPI + pathBorder
+	diagnose := host + pathAPI + pathDiag
 
 	// HTML form for response such that URLs are hyperlinks
 	var form = `<p>`+line1+`</p>
@@ -50,7 +49,7 @@ func HandlerLostUser(w http.ResponseWriter, r *http.Request) {
 				<p><a href="`+border+`">`+border+`</a></p>
 				<p><a href="`+diagnose+`">`+diagnose+`</a></p>`
 
-	//
+	// Generate HTML template from Form
 	res := template.New("table")
 	res, err := res.Parse(form)
 	if err != nil {
@@ -58,6 +57,7 @@ func HandlerLostUser(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("Could not parse HTML form: " + err.Error())
 	}
 
+	// Write template
 	err = res.Execute(w, nil)
 	if err != nil {
 		http.Error(w, "Could not process request", http.StatusInternalServerError)
